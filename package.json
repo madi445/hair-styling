@@ -1,0 +1,9 @@
+{
+  "name": "silk-styling-course",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Landing page and API for the Silk Styling online course",
+  "scripts": {
+    "start": "node backend/server.js"
+  }
+}
