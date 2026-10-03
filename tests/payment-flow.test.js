@@ -65,6 +65,9 @@ after(async () => {
 });
 
 test('Kaspi payment stays pending until admin approval and only paid accounts can stream lessons', async () => {
+  const health = await fetch(`${baseUrl}/api/health`);
+  assert.equal(health.status, 200);
+  assert.equal((await health.json()).status, 'ok');
   const configResponse = await fetch(`${baseUrl}/api/config`);
   const config = await configResponse.json();
   assert.equal(config.price, 30000);

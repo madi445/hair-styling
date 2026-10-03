@@ -288,6 +288,7 @@ const server = http.createServer(async (request, response) => {
       const promo = offer();
       return sendJson(response, 200, { ...config.publicConfig, ...promo, qrAvailable: fs.existsSync(qrPath), lessons: config.lessons });
     }
+    if (request.method === 'GET' && url.pathname === '/api/health') return sendJson(response, 200, { status: 'ok' });
 
     if (request.method === 'POST' && url.pathname === '/api/payments') {
       const data = await readJson(request);
