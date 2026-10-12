@@ -18,7 +18,7 @@
 PowerShell:
 
 ```powershell
-$env:ADMIN_PASSWORD = 'Задайте-длинный-уникальный-пароль'
+$env:ADMIN_PASSWORD = '12345kotez'
 npm start
 ```
 
@@ -28,7 +28,7 @@ npm start
 
 ## Деплой на Render
 
-В корне есть `render.yaml` для Node web service в Frankfurt с 5-ГБ persistent disk. План сервиса платный: Render не предоставляет persistent disk для бесплатного сервиса. Создайте Blueprint из GitHub-репозитория в Render Dashboard, проверьте сгенерированный `ADMIN_PASSWORD` в настройках сервиса и не публикуйте его. Проверка готовности сервиса выполняется через `/api/health`.
+В корне есть `render.yaml` для Node web service в Frankfurt с 5-ГБ persistent disk. План сервиса платный: Render не предоставляет persistent disk для бесплатного сервиса. Создайте Blueprint из GitHub-репозитория в Render Dashboard, проверьте сгенерированный `12345kotez` в настройках сервиса и не публикуйте его. Проверка готовности сервиса выполняется через `/api/health`.
 
 Видео намеренно не копируется в Git при новых коммитах. После создания сервиса настройте SSH в Render и загрузите файл командой по SSH-адресу, который Dashboard показывает для сервиса:
 

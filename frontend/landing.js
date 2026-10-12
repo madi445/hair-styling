@@ -23,6 +23,7 @@ async function loadLanding() {
   const response = await fetch(`${API_BASE}/api/config`, { credentials: 'include' });
   if (!response.ok) throw new Error('Backend unavailable');
   const offer = await response.json();
+  document.querySelectorAll('[data-buy]').forEach(link => { link.href = offer.purchaseUrl; });
   document.querySelector('#price').textContent = money(offer.price);
   document.querySelector('#oldPrice').textContent = offer.promoActive ? money(offer.regularPrice) : '';
   document.querySelector('#promoNote').textContent = offer.promoActive ? 'Первые 7 дней специальная цена.' : 'Сейчас действует стандартная цена.';

@@ -71,6 +71,18 @@ test('Kaspi payment stays pending until admin approval and only paid accounts ca
   const configResponse = await fetch(`${baseUrl}/api/config`);
   const config = await configResponse.json();
   assert.equal(config.price, 30000);
+  const purchase = new URL(config.purchaseUrl);
+  assert.equal(purchase.origin + purchase.pathname, 'https://wa.me/77479706963');
+  assert.equal(purchase.searchParams.get('text'), config.purchaseMessage);
+  for (const route of ['/course/payment/', '/course/payment', '/course/payment/success/', '/course/payment/pending/', '/frontend/payment.html']) {
+    const redirect = await fetch(baseUrl + route, { redirect: 'manual' });
+    assert.equal(redirect.status, 303);
+    assert.equal(redirect.headers.get('location'), config.purchaseUrl);
+  }
+  const landing = await (await fetch(baseUrl + '/')).text();
+  assert.equal((landing.match(/data-buy href="https:\/\/wa.me\//g) || []).length, 2);
+  assert.ok(!landing.includes('href="/course/payment/"'));
+
   assert.equal(config.promoActive, true);
   assert.equal(config.regularPrice, 50000);
   assert.equal(config.qrAvailable, true);

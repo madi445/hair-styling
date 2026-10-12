@@ -13,6 +13,7 @@ module.exports = {
     regularPrice: 50000,
     promoDays: 7,
     whatsapp: 'https://wa.me/77479706963',
+    purchaseMessage: 'Здравствуйте! Хочу приобрести онлайн-курс "Шёлковая укладка" (Silk Styling). Подскажите, пожалуйста, как произвести оплату и получить доступ к урокам?',
     instagram: 'https://www.instagram.com/elvira.akkulykyzy?stkn=dDZ1eGdnNWlib2Fw',
     sellerName: 'ИП Эльвира',
     sellerAddress: 'г. Астана, пр. Әл-Фараби д. 33',

@@ -217,7 +217,15 @@ function allowedOrigin(request, response) {
   return true;
 }
 
+function purchaseUrl() {
+  return config.publicConfig.whatsapp + '?text=' + encodeURIComponent(config.publicConfig.purchaseMessage);
+}
 function serveStatic(urlPath, response) {
+  if (/^\/(?:course\/payment(?:\/(?:success|pending))?\/?|frontend\/(?:payment|pending|success)\.html)$/.test(urlPath)) {
+    response.writeHead(303, { Location: purchaseUrl(), 'Cache-Control': 'no-store' });
+    response.end();
+    return true;
+  }
   const pages = new Map([
     ['/', 'index.html'], ['/course/', 'index.html'], ['/course/payment/', 'frontend/payment.html'],
     ['/course/payment/success/', 'frontend/success.html'], ['/course/payment/pending/', 'frontend/pending.html'],
@@ -238,7 +246,10 @@ function serveStatic(urlPath, response) {
   const extension = path.extname(filePath).toLowerCase();
   const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.jpeg': 'image/jpeg', '.jpg': 'image/jpeg' };
   response.writeHead(200, { 'Content-Type': types[extension] || 'application/octet-stream', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
-  fs.createReadStream(filePath).pipe(response);
+  if (relativePath === 'index.html') {
+    const html = fs.readFileSync(filePath, 'utf8').replace(/(data-buy href=")[^"]*"/g, '$1' + purchaseUrl().replaceAll('&', '&amp;') + '"');
+    response.end(html);
+  } else fs.createReadStream(filePath).pipe(response);
   return true;
 }
 
@@ -286,7 +297,7 @@ const server = http.createServer(async (request, response) => {
 
     if (request.method === 'GET' && url.pathname === '/api/config') {
       const promo = offer();
-      return sendJson(response, 200, { ...config.publicConfig, ...promo, qrAvailable: fs.existsSync(qrPath), lessons: config.lessons });
+      return sendJson(response, 200, { ...config.publicConfig, ...promo, purchaseUrl: purchaseUrl(), qrAvailable: fs.existsSync(qrPath), lessons: config.lessons });
     }
     if (request.method === 'GET' && url.pathname === '/api/health') return sendJson(response, 200, { status: 'ok' });
 
