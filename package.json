@@ -5,7 +5,9 @@
   "description": "Landing page and API for the Silk Styling online course",
   "scripts": {
     "start": "node backend/server.js",
-    "test": "node --test"
+    "test": "node --test",
+    "build:site": "node scripts/build-site.js",
+    "test:mobile": "node scripts/check-mobile.js"
   },
   "engines": {
     "node": ">=22.5.0"

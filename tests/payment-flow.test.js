@@ -82,24 +82,20 @@ test('Kaspi payment stays pending until admin approval and only paid accounts ca
   const landing = await (await fetch(baseUrl + '/')).text();
   assert.equal((landing.match(/data-buy href="https:\/\/wa.me\//g) || []).length, 2);
   assert.ok(!landing.includes('href="/course/payment/"'));
+  assert.ok(!landing.includes('id="timer"'));
+  assert.ok(!landing.includes('class="testimonial"'));
+  assert.ok(landing.includes('/frontend/site-config.js'));
+  const sharedConfig = await fetch(baseUrl + '/frontend/site-config.js');
+  assert.equal(sharedConfig.status, 200);
 
-  assert.equal(config.promoActive, true);
+
+  assert.equal(config.promoActive, false);
   assert.equal(config.regularPrice, 50000);
   assert.equal(config.qrAvailable, true);
   const qrResponse = await fetch(`${baseUrl}${config.kaspiQrUrl}`);
   assert.equal(qrResponse.status, 200);
   assert.equal(qrResponse.headers.get('content-type'), 'image/jpeg');
   assert.ok((await qrResponse.arrayBuffer()).byteLength > 1000);
-
-  const expiredDb = new DatabaseSync(databasePath);
-  expiredDb.prepare('UPDATE settings SET value = ? WHERE key = ?').run(new Date(Date.now() - 8 * 86400000).toISOString(), 'promo_start_at');
-  expiredDb.close();
-  const expiredConfig = await (await fetch(`${baseUrl}/api/config`)).json();
-  assert.equal(expiredConfig.promoActive, false);
-  assert.equal(expiredConfig.price, 50000);
-  const resetDb = new DatabaseSync(databasePath);
-  resetDb.prepare('UPDATE settings SET value = ? WHERE key = ?').run(new Date().toISOString(), 'promo_start_at');
-  resetDb.close();
 
   assert.equal((await fetch(`${baseUrl}/videos/IMG_1016.MOV`)).status, 404);
   assert.equal((await fetch(`${baseUrl}/api/lessons/lesson-1/video`, { headers: { Range: 'bytes=0-3' } })).status, 401);

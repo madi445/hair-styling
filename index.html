@@ -4,168 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f7ede8">
-  <title>Шёлковая укладка | Онлайн-курс</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
-
-    :root {
-      --ink: #342b2c;
-      --muted: #77696a;
-      --paper: #fffaf7;
-      --cream: #f8eee8;
-      --blush: #ead1ca;
-      --rose: #b97972;
-      --rose-dark: #965b57;
-      --gold: #bd916d;
-      --line: rgba(86, 57, 52, .14);
-      --shadow: 0 24px 70px rgba(111, 69, 62, .13);
-    }
-
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      color: var(--ink);
-      background: var(--paper);
-      font-family: 'DM Sans', sans-serif;
-      line-height: 1.55;
-      user-select: none;
-      overflow-x: hidden;
-    }
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      opacity: .55;
-      background: radial-gradient(circle at 15% 10%, #fff 0 12%, transparent 38%), radial-gradient(circle at 88% 24%, #f1d7d2 0 8%, transparent 31%), linear-gradient(130deg, #fffaf7, #f8eee8 58%, #fffdfb);
-    }
-    body::after {
-      content: '';
-      position: fixed;
-      z-index: -1;
-      width: 50vw;
-      height: 100vh;
-      right: -18vw;
-      top: 8vh;
-      border: 1px solid rgba(185, 121, 114, .12);
-      border-radius: 50%;
-      transform: rotate(-24deg);
-      pointer-events: none;
-    }
-    button, input { font: inherit; }
-    button { cursor: pointer; }
-    a { color: inherit; }
-    .wrap { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
-    .eyebrow { color: var(--rose-dark); font-size: .72rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
-    h1, h2, h3, p { margin-top: 0; }
-    h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; font-weight: 600; letter-spacing: -.025em; }
-    h1 { max-width: 700px; margin-bottom: 22px; font-size: clamp(3.1rem, 7vw, 6.8rem); line-height: .98; }
-    h2 { margin-bottom: 18px; font-size: clamp(2.2rem, 4.8vw, 4rem); line-height: 1.05; }
-    .site-header { padding: 25px 0; }
-    .nav { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-    .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); font-family: 'Playfair Display', Georgia, serif; font-size: 1.3rem; text-decoration: none; }
-    .brand-mark { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--rose); border-radius: 50%; color: var(--rose-dark); font-family: 'Playfair Display', Georgia, serif; }
-    .nav-link { color: var(--muted); font-size: .88rem; text-decoration: none; }
-    .nav-links { display: flex; align-items: center; gap: 22px; }
-    .instagram-link { display: inline-flex; align-items: center; gap: 7px; }
-    .instagram-icon { width: 17px; height: 17px; flex: 0 0 17px; color: var(--rose-dark); }
-    .hero { position: relative; min-height: 690px; padding: 95px 0 115px; }
-    .hero-grid { display: grid; grid-template-columns: 1.04fr .96fr; align-items: center; gap: 50px; }
-    .hero-copy { position: relative; z-index: 1; }
-    .hero-copy p { max-width: 560px; margin-bottom: 30px; color: var(--muted); font-size: 1.14rem; }
-    .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; }
-    .button { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 24px; border: 0; border-radius: 999px; color: #fff; background: var(--rose-dark); box-shadow: 0 12px 28px rgba(150, 91, 87, .23); font-weight: 700; text-decoration: none; transition: transform .2s, background .2s; }
-    .button:hover { background: #7f4c49; transform: translateY(-2px); }
-    .button.secondary { color: var(--ink); background: rgba(255,255,255,.5); border: 1px solid var(--line); box-shadow: none; }
-    .hero-note { color: var(--muted); font-size: .86rem; }
-    .hero-art { position: relative; min-height: 510px; }
-    .art-orbit { position: absolute; inset: 8% 10% 7% 8%; border: 1px solid rgba(185, 121, 114, .25); border-radius: 50%; transform: rotate(27deg); }
-    .art-orbit::before, .art-orbit::after { content: ''; position: absolute; inset: 8% 13%; border: 1px solid rgba(189, 145, 109, .18); border-radius: 50%; }
-    .art-orbit::after { inset: -5% 22%; transform: rotate(70deg); }
-    .art-card { position: absolute; inset: 15% 11% 9% 15%; display: flex; flex-direction: column; justify-content: space-between; padding: 35px; overflow: hidden; border: 1px solid rgba(255,255,255,.8); border-radius: 48% 48% 15% 15% / 29% 29% 8% 8%; background: linear-gradient(145deg, rgba(255,255,255,.84), rgba(234, 209, 202, .88)); box-shadow: var(--shadow); }
-    .art-card::before { content: ''; position: absolute; width: 160px; height: 420px; left: 29%; top: 10%; border: 1px solid rgba(150, 91, 87, .28); border-radius: 50%; transform: rotate(29deg); }
-    .art-card::after { content: ''; position: absolute; width: 280px; height: 560px; left: 43%; top: 10%; border-left: 1px solid rgba(150, 91, 87, .25); border-radius: 50%; transform: rotate(-24deg); }
-    .art-label { position: relative; z-index: 1; color: var(--rose-dark); font-size: .72rem; letter-spacing: .15em; text-transform: uppercase; }
-    .art-title { position: relative; z-index: 1; max-width: 220px; font-family: 'Playfair Display', Georgia, serif; font-size: 2.25rem; line-height: 1.05; }
-    .floating-tag { position: absolute; right: 0; bottom: 3%; z-index: 2; padding: 16px 18px; border: 1px solid rgba(255,255,255,.9); border-radius: 18px; background: rgba(255,255,255,.78); box-shadow: 0 15px 35px rgba(111,69,62,.13); font-size: .82rem; }
-    .floating-tag strong { display: block; font-family: 'Playfair Display', Georgia, serif; font-size: 1.2rem; }
-    .section { padding: 105px 0; }
-    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 30px; margin-bottom: 38px; }
-    .section-head p { max-width: 420px; margin-bottom: 5px; color: var(--muted); }
-    .modules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-    .module { min-height: 215px; padding: 25px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.47); }
-    .module-number { color: var(--rose); font-family: 'Playfair Display', Georgia, serif; font-size: 2.1rem; }
-    .module h3 { margin: 20px 0 8px; font-size: 1.45rem; }
-    .module p { margin: 0; color: var(--muted); font-size: .93rem; }
-    .proof-section { background: rgba(255, 255, 255, .38); }
-    .proof-grid { display: grid; grid-template-columns: minmax(0, 680px); gap: 16px; }
-    .testimonial { padding: 28px; border-left: 3px solid var(--rose); background: rgba(255,255,255,.65); }
-    .testimonial p { margin-bottom: 18px; font-family: 'Playfair Display', Georgia, serif; font-size: 1.32rem; line-height: 1.3; }
-    .person { color: var(--muted); font-size: .85rem; }
-    .offer { position: relative; overflow: hidden; padding: 75px 0; }
-    .offer::before { content: ''; position: absolute; width: 540px; height: 540px; right: -200px; top: -140px; border: 1px solid rgba(255,255,255,.32); border-radius: 50%; }
-    .offer-panel { display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: 60px; padding: 55px; border-radius: 22px; color: #fffaf7; background: linear-gradient(120deg, #8d5653, #b87971); box-shadow: var(--shadow); }
-    .offer-panel h2 { margin-bottom: 14px; }
-    .offer-panel p { color: rgba(255,250,247,.8); }
-    .price-box { position: relative; z-index: 1; padding: 27px; border: 1px solid rgba(255,255,255,.32); border-radius: 16px; background: rgba(255,255,255,.1); }
-    .price { display: block; margin: 5px 0 5px; font-family: 'Playfair Display', Georgia, serif; font-size: 3.9rem; line-height: 1; }
-    .old-price { color: rgba(255,255,255,.6); text-decoration: line-through; }
-    .offer .button { width: 100%; margin-top: 20px; color: var(--rose-dark); background: #fffaf7; box-shadow: none; }
-    .timer { margin-top: 18px; color: rgba(255,255,255,.76); font-size: .83rem; text-align: center; }
-    .footer { padding: 36px 0; color: var(--muted); font-size: .82rem; }
-    .footer-inner { display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid var(--line); padding-top: 22px; }
-    .modal-backdrop { position: fixed; inset: 0; z-index: 10; display: none; place-items: center; padding: 20px; background: rgba(52,43,44,.45); backdrop-filter: blur(8px); }
-    .modal-backdrop.open { display: grid; }
-    .modal { width: min(560px, 100%); max-height: min(720px, 92vh); overflow: auto; padding: 32px; border: 1px solid rgba(255,255,255,.8); border-radius: 22px; background: #fffaf7; box-shadow: 0 30px 80px rgba(52,43,44,.25); }
-    .modal h2 { font-size: 2.1rem; }
-    .modal-close { float: right; width: 34px; height: 34px; border: 0; border-radius: 50%; color: var(--muted); background: var(--cream); font-size: 1.2rem; }
-    .rules { margin: 20px 0; padding: 18px 18px 18px 36px; border-radius: 12px; color: var(--muted); background: var(--cream); font-size: .9rem; }
-    .rules li + li { margin-top: 9px; }
-    .field-label { display: block; margin: 17px 0 7px; font-size: .85rem; font-weight: 700; }
-    .field { width: 100%; height: 48px; padding: 0 14px; border: 1px solid var(--line); border-radius: 10px; outline: none; color: var(--ink); background: #fff; user-select: text; }
-    .field:focus { border-color: var(--rose); box-shadow: 0 0 0 3px rgba(185,121,114,.14); }
-    .consent { display: flex; gap: 10px; align-items: flex-start; margin: 18px 0; color: var(--muted); font-size: .86rem; user-select: text; }
-    .consent input { accent-color: var(--rose-dark); margin-top: 4px; }
-    .modal .button { width: 100%; }
-    .modal .button:disabled { cursor: not-allowed; opacity: .45; transform: none; }
-    .success-screen { position: fixed; inset: 0; z-index: 20; display: none; place-items: center; padding: 20px; background: linear-gradient(135deg, #fffaf7, #f0d8d2); }
-    .success-screen.open { display: grid; }
-    .success-card { width: min(580px, 100%); padding: clamp(30px, 7vw, 70px); border: 1px solid rgba(255,255,255,.9); border-radius: 25px; background: rgba(255,255,255,.68); box-shadow: var(--shadow); text-align: center; }
-    .success-icon { display: grid; place-items: center; width: 55px; height: 55px; margin: 0 auto 22px; border-radius: 50%; color: #fff; background: var(--rose); font-size: 1.4rem; }
-    .success-card h2 { font-size: 2.7rem; }
-    .protected-player { display: none; margin-top: 24px; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: #2c2223; }
-    .protected-player.visible { display: block; }
-    .protected-player video { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; background: #2c2223; }
-    .watermark { padding: 8px 12px; color: rgba(255,255,255,.68); font-size: .72rem; text-align: right; }
-    .success-card p { color: var(--muted); }
-    .contact-link { display: inline-block; margin: 10px 0 26px; color: var(--rose-dark); font-weight: 700; }
-    @media (max-width: 760px) {
-      .wrap { width: min(100% - 28px, 560px); }
-      .site-header { padding-top: 18px; }
-      .nav-links { gap: 12px; }
-      .nav-link:first-child { display: none; }
-      .hero { min-height: auto; padding: 65px 0 70px; }
-      .hero-grid, .offer-panel { grid-template-columns: 1fr; gap: 35px; }
-      .hero-art { min-height: 390px; order: -1; }
-      .art-card { inset: 8% 9% 5% 11%; padding: 25px; }
-      .art-title { font-size: 1.8rem; }
-      .section { padding: 70px 0; }
-      .section-head { display: block; }
-      .section-head p { margin-top: 15px; }
-      .modules, .proof-grid { grid-template-columns: 1fr; }
-      .offer-panel { padding: 30px 22px; }
-      .price-box { margin-top: 5px; }
-      .footer-inner { display: block; }
-      .footer-inner span { display: block; margin-top: 7px; }
-    }
-  </style>
+  <title>Шёлковая укладка — онлайн-курс | Silk Styling</title>
+  <meta name="description" content="Подготовка волос, объём, гладкость и мягкие волны: онлайн-курс для себя. Покупка через WhatsApp.">
+  <meta property="og:title" content="Шёлковая укладка · Silk Styling"><meta property="og:description" content="Научитесь укладывать волосы самостоятельно. Детали покупки — в WhatsApp."><meta property="og:type" content="website">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/frontend/landing.css">
 </head>
 <body>
   <header class="site-header">
     <div class="wrap nav">
       <a class="brand" href="#top"><span class="brand-mark">S</span> Silk Styling</a>
-      <div class="nav-links"><a class="nav-link" href="#program">Программа курса</a><a class="nav-link instagram-link" href="https://www.instagram.com/elvira.akkulykyzy?stkn=dDZ1eGdnNWlib2Fw" target="_blank" rel="noopener"><svg class="instagram-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.7" r="1.1" fill="currentColor"/></svg>Instagram</a></div>
+      <div class="nav-links"><a class="nav-link" data-course hidden href="/course/my-course/">Мой курс</a><a class="nav-link" href="#program">Программа курса</a><a class="nav-link instagram-link" href="https://www.instagram.com/elvira.akkulykyzy" target="_blank" rel="noopener noreferrer"><svg class="instagram-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.7" r="1.1" fill="currentColor"/></svg>Instagram</a></div>
     </div>
   </header>
 
@@ -174,48 +23,36 @@
       <div class="wrap hero-grid">
         <div class="hero-copy">
           <span class="eyebrow">Онлайн-курс по укладке волос</span>
-          <h1>Укладка, которая выглядит дорого и держится весь день</h1>
-          <p>Пошаговая система для тех, кто устал тратить час у зеркала. Научитесь создавать гладкость, объём и мягкие волны самостоятельно — без салона и сложных инструментов.</p>
-          <div class="hero-actions">
+          <h1>Шёлковая укладка — научись создавать красивую укладку самостоятельно</h1>
+          <p>Пошаговый онлайн-курс по укладке волос: от правильной подготовки до объёма, гладкости и мягких волн.</p>
+          <div class="hero-price" data-price>30 000 ₸</div><div class="hero-actions">
             <a class="button" data-buy href="https://wa.me/77479706963?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%BF%D1%80%D0%B8%D0%BE%D0%B1%D1%80%D0%B5%D1%81%D1%82%D0%B8%20%D0%BE%D0%BD%D0%BB%D0%B0%D0%B9%D0%BD-%D0%BA%D1%83%D1%80%D1%81%20%22%D0%A8%D1%91%D0%BB%D0%BA%D0%BE%D0%B2%D0%B0%D1%8F%20%D1%83%D0%BA%D0%BB%D0%B0%D0%B4%D0%BA%D0%B0%22%20%28Silk%20Styling%29.%20%D0%9F%D0%BE%D0%B4%D1%81%D0%BA%D0%B0%D0%B6%D0%B8%D1%82%D0%B5%2C%20%D0%BF%D0%BE%D0%B6%D0%B0%D0%BB%D1%83%D0%B9%D1%81%D1%82%D0%B0%2C%20%D0%BA%D0%B0%D0%BA%20%D0%BF%D1%80%D0%BE%D0%B8%D0%B7%D0%B2%D0%B5%D1%81%D1%82%D0%B8%20%D0%BE%D0%BF%D0%BB%D0%B0%D1%82%D1%83%20%D0%B8%20%D0%BF%D0%BE%D0%BB%D1%83%D1%87%D0%B8%D1%82%D1%8C%20%D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%20%D0%BA%20%D1%83%D1%80%D0%BE%D0%BA%D0%B0%D0%BC%3F" target="_blank" rel="noopener noreferrer">Купить курс</a>
-            <span class="hero-note">5 модулей · доступ навсегда</span>
+            <a class="button secondary" data-question href="https://wa.me/77479706963" target="_blank" rel="noopener noreferrer">Задать вопрос</a>
           </div>
-        </div>
-        <div class="hero-art" aria-hidden="true">
-          <div class="art-orbit"></div>
-          <div class="art-card"><span class="art-label">Silk styling / 01</span><span class="art-title">Твоя новая любимая укладка</span></div>
-          <div class="floating-tag"><strong>Результат</strong> уверенность с первого движения</div>
         </div>
       </div>
     </section>
 
     <section class="section" id="program">
       <div class="wrap">
-        <div class="section-head"><div><span class="eyebrow">Внутри курса</span><h2>Соберите свой<br>фирменный образ</h2></div><p>Короткие уроки, понятные схемы и техники, которые можно повторить уже сегодня.</p></div>
+        <div class="section-head"><div><span class="eyebrow">Внутри курса</span><h2>Соберите свой<br>фирменный образ</h2></div><p>Пять разделов программы для самостоятельной практики. Формат материалов уточните перед покупкой.</p></div>
         <div class="modules" id="modules"></div>
       </div>
     </section>
 
-    <section class="section proof-section">
-      <div class="wrap">
-        <div class="section-head"><div><span class="eyebrow">Девушки о курсе</span><h2>Когда укладка<br>работает на вас</h2></div></div>
-        <div class="proof-grid">
-          <article class="testimonial"><p>«Я впервые поняла, почему объём исчезал через час. Теперь укладываюсь за 15 минут и получаю комплименты даже в обычный рабочий день.»</p><span class="person">Анна, ученица курса</span></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="offer" id="offer">
+<section class="offer" id="offer">
       <div class="wrap offer-panel">
-        <div><span class="eyebrow" style="color:#f6d5cc">Начните сегодня</span><h2>Волосы, которыми хочется любоваться</h2><p>Доступ к материалам навсегда. Поддержка по вопросам доступа в WhatsApp.</p></div>
-        <div class="price-box"><span class="old-price" id="oldPrice"></span><span class="price" id="price">Загрузка цены…</span><span>разовая оплата · доступ навсегда</span><a class="button" id="buyButton" data-buy href="https://wa.me/77479706963?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%BF%D1%80%D0%B8%D0%BE%D0%B1%D1%80%D0%B5%D1%81%D1%82%D0%B8%20%D0%BE%D0%BD%D0%BB%D0%B0%D0%B9%D0%BD-%D0%BA%D1%83%D1%80%D1%81%20%22%D0%A8%D1%91%D0%BB%D0%BA%D0%BE%D0%B2%D0%B0%D1%8F%20%D1%83%D0%BA%D0%BB%D0%B0%D0%B4%D0%BA%D0%B0%22%20%28Silk%20Styling%29.%20%D0%9F%D0%BE%D0%B4%D1%81%D0%BA%D0%B0%D0%B6%D0%B8%D1%82%D0%B5%2C%20%D0%BF%D0%BE%D0%B6%D0%B0%D0%BB%D1%83%D0%B9%D1%81%D1%82%D0%B0%2C%20%D0%BA%D0%B0%D0%BA%20%D0%BF%D1%80%D0%BE%D0%B8%D0%B7%D0%B2%D0%B5%D1%81%D1%82%D0%B8%20%D0%BE%D0%BF%D0%BB%D0%B0%D1%82%D1%83%20%D0%B8%20%D0%BF%D0%BE%D0%BB%D1%83%D1%87%D0%B8%D1%82%D1%8C%20%D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%20%D0%BA%20%D1%83%D1%80%D0%BE%D0%BA%D0%B0%D0%BC%3F" target="_blank" rel="noopener noreferrer">Купить через WhatsApp</a><div class="timer" id="timer"></div><div class="timer" id="promoNote"></div><p style="font-size:.85rem;margin:18px 0 0">Нажмите на кнопку, чтобы узнать детали оплаты в WhatsApp. После подтверждения оплаты вы получите доступ к курсу.</p></div>
+        <div><span class="eyebrow" style="color:#f6d5cc">Начните сегодня</span><h2>Волосы, которыми хочется любоваться</h2><p>Детали оплаты согласовываются в WhatsApp. После проверки поступления денег администратор выдаст доступ к курсу.</p></div>
+        <div class="price-box"><span class="old-price" id="oldPrice"></span><span class="price" id="price" data-price>30 000 ₸</span><span>разовая оплата</span><a class="button" id="buyButton" data-buy href="https://wa.me/77479706963?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%BF%D1%80%D0%B8%D0%BE%D0%B1%D1%80%D0%B5%D1%81%D1%82%D0%B8%20%D0%BE%D0%BD%D0%BB%D0%B0%D0%B9%D0%BD-%D0%BA%D1%83%D1%80%D1%81%20%22%D0%A8%D1%91%D0%BB%D0%BA%D0%BE%D0%B2%D0%B0%D1%8F%20%D1%83%D0%BA%D0%BB%D0%B0%D0%B4%D0%BA%D0%B0%22%20%28Silk%20Styling%29.%20%D0%9F%D0%BE%D0%B4%D1%81%D0%BA%D0%B0%D0%B6%D0%B8%D1%82%D0%B5%2C%20%D0%BF%D0%BE%D0%B6%D0%B0%D0%BB%D1%83%D0%B9%D1%81%D1%82%D0%B0%2C%20%D0%BA%D0%B0%D0%BA%20%D0%BF%D1%80%D0%BE%D0%B8%D0%B7%D0%B2%D0%B5%D1%81%D1%82%D0%B8%20%D0%BE%D0%BF%D0%BB%D0%B0%D1%82%D1%83%20%D0%B8%20%D0%BF%D0%BE%D0%BB%D1%83%D1%87%D0%B8%D1%82%D1%8C%20%D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%20%D0%BA%20%D1%83%D1%80%D0%BE%D0%BA%D0%B0%D0%BC%3F" target="_blank" rel="noopener noreferrer">Купить через WhatsApp</a><p class="purchase-note">Нажмите на кнопку, чтобы узнать детали оплаты в WhatsApp. После подтверждения оплаты вы получите доступ к курсу.</p></div>
       </div>
     </section>
   </main>
 
-  <footer class="footer"><div class="wrap footer-inner"><span>© Silk Styling</span><span>Материалы курса предназначены для личного использования</span><a class="instagram-link" href="https://www.instagram.com/elvira.akkulykyzy?stkn=dDZ1eGdnNWlib2Fw" target="_blank" rel="noopener"><svg class="instagram-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.7" r="1.1" fill="currentColor"/></svg>Instagram</a></div></footer>
+  <footer class="footer"><div class="wrap footer-inner"><span>© Silk Styling</span><span>Материалы курса предназначены для личного использования</span><a class="instagram-link" href="https://www.instagram.com/elvira.akkulykyzy" target="_blank" rel="noopener noreferrer"><svg class="instagram-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.7" r="1.1" fill="currentColor"/></svg>Instagram</a></div></footer>
 
 
+  <a class="whatsapp-float" data-question href="https://wa.me/77479706963" target="_blank" rel="noopener noreferrer" aria-label="Задать вопрос в WhatsApp"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.5 11.7a8.5 8.5 0 0 1-12.6 7.5L3 20.5l1.3-4.8a8.5 8.5 0 1 1 16.2-4Z" stroke="currentColor" stroke-width="1.7"/><path d="M8 7.5c-1.5 3 2.5 7 5.5 8l2-2-2-1.5-1 1c-1.5-.5-2.5-1.5-3-3l1-1L9 7.5H8Z" fill="currentColor"/></svg></a>
+  <script src="/frontend/site-config.js" defer></script>
   <script src="/frontend/landing.js" defer></script>
 </body>
 </html>

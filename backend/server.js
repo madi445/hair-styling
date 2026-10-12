@@ -70,13 +70,6 @@ if (!paymentColumns.has('screenshot_mime')) db.exec('ALTER TABLE payments ADD CO
 if (!paymentColumns.has('rules_accepted')) db.exec('ALTER TABLE payments ADD COLUMN rules_accepted INTEGER NOT NULL DEFAULT 0 CHECK(rules_accepted IN (0, 1))');
 if (!paymentColumns.has('rules_accepted_at')) db.exec("ALTER TABLE payments ADD COLUMN rules_accepted_at TEXT NOT NULL DEFAULT ''");
 
-const setting = db.prepare('SELECT value FROM settings WHERE key = ?').get('promo_start_at');
-if (!setting) {
-  const start = process.env.PROMO_START_AT || new Date().toISOString();
-  if (Number.isNaN(Date.parse(start))) throw new Error('PROMO_START_AT must be a valid ISO date');
-  db.prepare('INSERT INTO settings(key, value) VALUES (?, ?)').run('promo_start_at', start);
-}
-
 const queries = {
   userByEmail: db.prepare('SELECT * FROM users WHERE email = ? COLLATE NOCASE'),
   userById: db.prepare('SELECT id, name, phone, email, created_at FROM users WHERE id = ?'),
@@ -117,15 +110,10 @@ function readJson(request, maxBytes = 7 * 1024 * 1024) {
 }
 
 function offer() {
-  const startedAt = db.prepare('SELECT value FROM settings WHERE key = ?').get('promo_start_at').value;
-  const endsAt = new Date(Date.parse(startedAt) + config.publicConfig.promoDays * 24 * 60 * 60 * 1000);
-  const promoActive = Date.now() < endsAt.getTime();
   return {
-    promoActive,
-    price: promoActive ? config.publicConfig.promoPrice : config.publicConfig.regularPrice,
+    price: config.publicConfig.price,
     regularPrice: config.publicConfig.regularPrice,
-    promoEndsAt: endsAt.toISOString(),
-    promoStartedAt: startedAt
+    promoActive: config.publicConfig.promotionActive === true && config.publicConfig.price < config.publicConfig.regularPrice
   };
 }
 
@@ -227,7 +215,7 @@ function serveStatic(urlPath, response) {
     return true;
   }
   const pages = new Map([
-    ['/', 'index.html'], ['/course/', 'index.html'], ['/course/payment/', 'frontend/payment.html'],
+    ['/', 'index.html'], ['/index.html', 'index.html'], ['/course/', 'index.html'], ['/course/payment/', 'frontend/payment.html'],
     ['/course/payment/success/', 'frontend/success.html'], ['/course/payment/pending/', 'frontend/pending.html'],
     ['/course/my-course/', 'frontend/my-course.html'], ['/admin/payments/', 'frontend/admin-payments.html']
   ]);
@@ -238,16 +226,19 @@ function serveStatic(urlPath, response) {
   if (urlPath === '/frontend/course.js') relativePath = 'frontend/course.js';
   if (urlPath === '/frontend/payment.js') relativePath = 'frontend/payment.js';
   if (urlPath === '/frontend/admin.js') relativePath = 'frontend/admin.js';
+  if (urlPath === '/frontend/site-config.js') relativePath = 'frontend/site-config.js';
+  if (urlPath === '/frontend/landing.css') relativePath = 'frontend/landing.css';
+  if (urlPath === '/assets/favicon.svg') relativePath = 'assets/favicon.svg';
   if (urlPath === '/frontend/landing.js') relativePath = 'frontend/landing.js';
   if (urlPath === config.publicConfig.kaspiQrUrl && fs.existsSync(qrPath)) relativePath = qrPath;
   if (!relativePath) return false;
   const filePath = path.isAbsolute(relativePath) ? relativePath : path.join(root, relativePath);
   if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) return false;
   const extension = path.extname(filePath).toLowerCase();
-  const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.jpeg': 'image/jpeg', '.jpg': 'image/jpeg' };
+  const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.jpeg': 'image/jpeg', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml' };
   response.writeHead(200, { 'Content-Type': types[extension] || 'application/octet-stream', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
   if (relativePath === 'index.html') {
-    const html = fs.readFileSync(filePath, 'utf8').replace(/(data-buy href=")[^"]*"/g, '$1' + purchaseUrl().replaceAll('&', '&amp;') + '"');
+    const html = fs.readFileSync(filePath, 'utf8').replace(/(data-buy href=")[^"]*"/g, '$1' + purchaseUrl().replaceAll('&', '&amp;') + '"').replace('data-course hidden', 'data-course');
     response.end(html);
   } else fs.createReadStream(filePath).pipe(response);
   return true;
@@ -466,4 +457,4 @@ const server = http.createServer(async (request, response) => {
   }
 });
 
-server.listen(config.port, () => console.log(`Silk Styling: http://localhost:${config.port}`));
+server.listen(config.port, process.env.HOST || '0.0.0.0', () => console.log(`Silk Styling: http://localhost:${config.port}`));
