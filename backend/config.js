@@ -15,6 +15,6 @@ module.exports = {
     kaspiQrUrl: '/assets/kaspi-qr.jpeg'
   },
   lessons: [
-    { id: 'lesson-1', title: 'Урок 1. Подготовка волос', description: 'Техника подготовки и создания стойкой укладки.' }
+    { id: 'lesson-1', title: 'Урок 1. Подготовка волос', description: 'Подготовка волос к созданию пляжных небрежных локонов.' }
   ]
 };
