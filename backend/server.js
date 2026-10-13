@@ -217,13 +217,15 @@ function serveStatic(urlPath, response) {
   const pages = new Map([
     ['/', 'index.html'], ['/index.html', 'index.html'], ['/course/', 'index.html'], ['/course/payment/', 'frontend/payment.html'],
     ['/course/payment/success/', 'frontend/success.html'], ['/course/payment/pending/', 'frontend/pending.html'],
-    ['/course/my-course/', 'frontend/my-course.html'], ['/admin/payments/', 'frontend/admin-payments.html']
+    ['/course/confirm-payment/', 'frontend/confirm-payment.html'], ['/course/payment-status/', 'frontend/payment-status.html'], ['/course/my-course/', 'frontend/my-course.html'], ['/admin/payments/', 'frontend/admin-payments.html']
   ]);
   let relativePath = pages.get(urlPath);
   const lessonMatch = urlPath.match(/^\/course\/lesson\/([a-z0-9-]+)\/$/i);
   if (lessonMatch) relativePath = 'frontend/lesson.html';
   if (urlPath === '/frontend/course.css') relativePath = 'frontend/course.css';
   if (urlPath === '/frontend/course.js') relativePath = 'frontend/course.js';
+  if (urlPath === '/frontend/confirm-payment.js') relativePath = 'frontend/confirm-payment.js';
+  if (urlPath === '/frontend/payment-status.js') relativePath = 'frontend/payment-status.js';
   if (urlPath === '/frontend/payment.js') relativePath = 'frontend/payment.js';
   if (urlPath === '/frontend/admin.js') relativePath = 'frontend/admin.js';
   if (urlPath === '/frontend/site-config.js') relativePath = 'frontend/site-config.js';
@@ -302,8 +304,8 @@ const server = http.createServer(async (request, response) => {
       const transactionId = typeof data.transactionId === 'string' ? data.transactionId.trim().slice(0, 120) : '';
       const password = typeof data.password === 'string' ? data.password : '';
       const idempotencyKey = request.headers['idempotency-key'];
-      if (!name || !phone || !validEmail(email) || !paidAt || Number.isNaN(paidAt.getTime()) || !idempotencyKey || idempotencyKey.length > 100) {
-        return sendJson(response, 400, { error: 'Проверьте имя, телефон, email и дату оплаты.' });
+      if (!name || !validEmail(email) || !paidAt || Number.isNaN(paidAt.getTime()) || !idempotencyKey || idempotencyKey.length > 100) {
+        return sendJson(response, 400, { error: 'Проверьте имя, email и дату оплаты.' });
       }
       if (paidAt.getTime() > Date.now() + 5 * 60 * 1000 || paidAt.getTime() < Date.now() - 30 * 24 * 60 * 60 * 1000) {
         return sendJson(response, 400, { error: 'Укажите дату оплаты за последние 30 дней.' });

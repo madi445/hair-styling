@@ -15,7 +15,7 @@ services:
       - key: DATABASE_PATH
         value: /var/data/silk-styling.sqlite
       - key: VIDEO_PATH
-        value: /var/data/IMG_1016.MOV
+        value: /var/data/lesson-1.mp4
       - key: ADMIN_PASSWORD
         generateValue: true
     disk:

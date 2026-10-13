@@ -7,7 +7,7 @@ const silkPublicConfig = {
   "purchaseMessage": "Здравствуйте! Хочу приобрести онлайн-курс \"Пляжные небрежные локоны\". Подскажите, пожалуйста, как произвести оплату и получить доступ к урокам?",
   "questionMessage": "Здравствуйте! У меня вопрос об онлайн-курсе \"Пляжные небрежные локоны\".",
   "instagram": "https://www.instagram.com/elvira.akkulykyzy",
-  "courseUrl": "",
+  "courseUrl": "https://hair-styling.onrender.com/course/my-course/",
   "reviews": [],
   "modules": [
     {
@@ -31,7 +31,8 @@ const silkPublicConfig = {
       "text": "Жидкий лак и сухой лак — понемногу, чтобы сохранить лёгкость локонов."
     }
   ],
-  "courseName": "Пляжные небрежные локоны"
+  "courseName": "Пляжные небрежные локоны",
+  "receiptUrl": "https://hair-styling.onrender.com/course/confirm-payment/"
 };
 if (typeof module !== 'undefined' && module.exports) module.exports = silkPublicConfig;
 else globalThis.SILK_CONFIG = silkPublicConfig;

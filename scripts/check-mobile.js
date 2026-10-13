@@ -66,6 +66,10 @@ let child, socket;
     assert.equal(layout.theme, '#fffaf7', 'Theme stylesheet must parse correctly');
     assert.ok(layout.buy.every(button => button.background !== 'rgba(0, 0, 0, 0)' && button.background !== button.color), 'Purchase buttons must remain visible');
     assert.equal(layout.modules, 5);
+    const destinations = await evaluate("({course:document.querySelector('[data-course]')?.href,receipt:document.querySelector('[data-receipt]')?.href})");
+    assert.equal(destinations.course, config.courseUrl);
+    assert.equal(destinations.receipt, config.receiptUrl);
+
     assert.equal(layout.buy.length, 2);
     assert.ok(layout.buy.every(button => button.url === expected && button.height >= 48));
     assert.ok(layout.prices.every(price => price.replace(/\s/g, '') === '30000₸'));

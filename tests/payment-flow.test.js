@@ -64,13 +64,24 @@ after(async () => {
   fs.rmSync(temp, { recursive: true, force: true });
 });
 
-test('Kaspi payment stays pending until admin approval and only paid accounts can stream lessons', async () => {
+test('WhatsApp receipt stays pending until owner approval and only paid accounts can stream lessons', async () => {
   const health = await fetch(`${baseUrl}/api/health`);
   assert.equal(health.status, 200);
   assert.equal((await health.json()).status, 'ok');
   const configResponse = await fetch(`${baseUrl}/api/config`);
   const config = await configResponse.json();
   assert.equal(config.price, 30000);
+  assert.equal(config.courseUrl, 'https://hair-styling.onrender.com/course/my-course/');
+  assert.equal(config.receiptUrl, 'https://hair-styling.onrender.com/course/confirm-payment/');
+  for (const route of ['/course/confirm-payment/', '/course/payment-status/', '/frontend/confirm-payment.js', '/frontend/payment-status.js']) {
+    const page = await fetch(baseUrl + route, { redirect: 'manual' });
+    assert.equal(page.status, 200, route + ' must be served directly');
+  }
+  const receiptPage = await (await fetch(baseUrl + '/course/confirm-payment/')).text();
+  assert.ok(receiptPage.includes('id="receiptForm"'));
+  assert.ok(!receiptPage.includes('http-equiv="refresh"'));
+  assert.equal((await fetch(baseUrl + '/api/admin/payments')).status, 401);
+
   const purchase = new URL(config.purchaseUrl);
   assert.equal(purchase.origin + purchase.pathname, 'https://wa.me/77479706963');
   assert.equal(purchase.searchParams.get('text'), config.purchaseMessage);
@@ -101,7 +112,7 @@ test('Kaspi payment stays pending until admin approval and only paid accounts ca
   assert.equal((await fetch(`${baseUrl}/api/lessons/lesson-1/video`, { headers: { Range: 'bytes=0-3' } })).status, 401);
 
   const paymentData = {
-    name: 'Тестовый покупатель', phone: '8 (700) 123-45-67', email: 'buyer@example.com', password: 'course-password-123',
+    name: 'Тестовый покупатель', phone: '', email: 'buyer@example.com', password: 'course-password-123',
     amount: 30000, paidAt: new Date().toISOString(), transactionId: 'KASPI-TEST-001',
     screenshotData: 'data:image/png;base64,iVBORw0KGgo=', rulesAccepted: true
   };

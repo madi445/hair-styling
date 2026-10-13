@@ -1,0 +1,16 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Отправить чек | Пляжные небрежные локоны</title><link rel="stylesheet" href="/frontend/course.css"></head><body>
+<header class="shell topbar"><a class="brand" href="/course/">Silk Styling</a><a class="top-link" href="/course/my-course/">Мой курс</a></header>
+<main class="shell page"><section class="panel"><span class="kicker">После оплаты в WhatsApp</span><h1>Отправить чек</h1><p class="lead">Курс «Пляжные небрежные локоны». Мы проверим поступление денег и откроем доступ. Прикрепление чека само по себе не подтверждает оплату.</p>
+<form id="receiptForm" class="stack">
+<label>Ваше имя<input class="field" name="name" autocomplete="name" maxlength="120" required></label>
+<label>Email для входа<input class="field" name="email" type="email" autocomplete="email" maxlength="254" required></label>
+<label>Пароль кабинета<input class="field" name="password" type="password" autocomplete="new-password" minlength="10" maxlength="128" required><span class="hint">Не менее 10 символов. Если аккаунт уже есть, укажите его текущий пароль.</span></label>
+<label>Телефон (необязательно)<input class="field" name="phone" type="tel" autocomplete="tel" maxlength="40"></label>
+<label>Оплаченная сумма, ₸<input class="field" name="amount" type="number" min="1" step="1" required></label>
+<label>Дата и время оплаты<input class="field" name="paidAt" type="datetime-local" required></label>
+<label>Номер платежа (необязательно)<input class="field" name="transactionId" maxlength="120"></label>
+<label>Чек или скриншот оплаты<input class="field" name="screenshot" type="file" accept="image/jpeg,image/png,image/webp" required><span class="hint">JPG, PNG или WebP, до 5 МБ. Для PDF прикрепите скриншот чека.</span></label>
+<label class="checkrow"><input name="rulesAccepted" type="checkbox" required><span>Согласен(на) использовать материалы только лично и не передавать доступ третьим лицам.</span></label>
+<p class="error" id="receiptError" role="alert"></p><button class="button" type="submit">Отправить на проверку</button>
+</form><p class="hint">После отправки сохраните email и пароль: они понадобятся для входа с другого устройства.</p><a class="top-link" href="/course/payment-status/">Уже отправили чек? Проверить статус</a></section></main>
+<script src="/frontend/confirm-payment.js" defer></script></body></html>

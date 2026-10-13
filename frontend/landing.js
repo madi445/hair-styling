@@ -19,8 +19,9 @@
       entries.forEach(entry => entry.isIntersecting ? visible.add(entry.target) : visible.delete(entry.target));
       floating.hidden = visible.size > 0;
     });
-    document.querySelectorAll('[data-buy], [data-question]:not(.whatsapp-float), .footer').forEach(node => observer.observe(node));
+    document.querySelectorAll('[data-buy], [data-receipt], [data-question]:not(.whatsapp-float), .footer').forEach(node => observer.observe(node));
   }
+  document.querySelectorAll('[data-receipt]').forEach(link => { link.href = config.receiptUrl; });
   const root = document.querySelector('#modules'); root.replaceChildren();
   config.modules.forEach((module, index) => {
     const card = document.createElement('article'); card.className = 'module';
