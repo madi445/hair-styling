@@ -1,38 +1,35 @@
-// Public settings only. Never place passwords, tokens or private video links here.
+// Public settings only. No passwords, tokens or private video links.
 const silkPublicConfig = {
   "price": 30000,
   "regularPrice": 50000,
   "promotionActive": false,
-  "whatsapp": "https://wa.me/77479706963",
-  "purchaseMessage": "Здравствуйте! Хочу приобрести онлайн-курс \"Пляжные небрежные локоны\". Подскажите, пожалуйста, как произвести оплату и получить доступ к урокам?",
-  "questionMessage": "Здравствуйте! У меня вопрос об онлайн-курсе \"Пляжные небрежные локоны\".",
+  "whatsapp": "https://wa.me/77018441978",
+  "purchaseMessage": "Здравствуйте! Хочу получить доступ к видеоуроку Silk Styling по созданию пляжных локонов. Подскажите актуальную стоимость и как оплатить обучение.",
+  "questionMessage": "Здравствуйте! У меня вопрос об авторском видеоуроке Silk Styling.",
   "instagram": "https://www.instagram.com/elvira.akkulykyzy",
   "courseUrl": "https://hair-styling.onrender.com/course/my-course/",
   "reviews": [],
   "modules": [
     {
-      "title": "Подготовка и термозащита",
-      "text": "Подготовка волос и нанесение термозащиты. Без привязки к конкретному бренду."
+      "title": "Подготовка волос",
+      "text": "Как правильно подготовить волосы к укладке: вымыть, полностью высушить на 100% и обязательно использовать термозащиту."
     },
     {
-      "title": "Лёгкий объём",
-      "text": "Подготовка прикорневой зоны для естественного объёма без перегруженности."
+      "title": "Локоны и прикорневой объём",
+      "text": "Как работать с утюжком, создавать расслабленные пляжные локоны и придавать волосам объём у корней, не теряя визуальную длину."
     },
     {
-      "title": "Пляжные локоны",
-      "text": "Направление и форма локонов для расслабленного, небрежного образа."
-    },
-    {
-      "title": "Воздушная текстура",
-      "text": "Разбираем локоны и придаём им мягкость и естественную подвижность."
-    },
-    {
-      "title": "Лёгкая фиксация",
-      "text": "Жидкий лак и сухой лак — понемногу, чтобы сохранить лёгкость локонов."
+      "title": "Текстура и фиксация",
+      "text": "Как использовать жидкий лак для сохранения текстуры и сухой лак для фиксации без утяжеления волос."
     }
   ],
-  "courseName": "Пляжные небрежные локоны",
-  "receiptUrl": "https://hair-styling.onrender.com/course/confirm-payment/"
+  "courseName": "Небрежные пляжные локоны",
+  "receiptUrl": "https://hair-styling.onrender.com/course/confirm-payment/",
+  "brand": "SILK STYLING",
+  "author": "Эльвира Аққұлықызы",
+  "canRewatch": true,
+  "launchDate": "",
+  "siteUrl": ""
 };
-if (typeof module !== 'undefined' && module.exports) module.exports = silkPublicConfig;
+if (typeof module !== "undefined" && module.exports) module.exports = silkPublicConfig;
 else globalThis.SILK_CONFIG = silkPublicConfig;

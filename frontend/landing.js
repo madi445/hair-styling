@@ -1,33 +1,25 @@
+/* Silk Styling: WhatsApp enquiries and gentle section reveals. */
 (() => {
-  const config = globalThis.SILK_CONFIG;
-  if (!config) return;
-  const money = value => Number(value).toLocaleString('ru-KZ') + ' ₸';
-  const purchaseUrl = config.whatsapp + '?text=' + encodeURIComponent(config.purchaseMessage);
-  const questionUrl = config.whatsapp + '?text=' + encodeURIComponent(config.questionMessage);
-  document.querySelectorAll('[data-buy]').forEach(link => { link.href = purchaseUrl; });
-  document.querySelectorAll('[data-question]').forEach(link => { link.href = questionUrl; });
-  document.querySelectorAll('[data-price]').forEach(node => { node.textContent = money(config.price); });
-  document.querySelector('#oldPrice').textContent = config.promotionActive && config.price < config.regularPrice ? money(config.regularPrice) : '';
-  document.querySelectorAll('[data-course]').forEach(link => {
-    if (config.courseUrl) { link.href = config.courseUrl; link.hidden = false; }
+  'use strict';
+  const config=typeof globalThis.SILK_CONFIG==='object'?globalThis.SILK_CONFIG:{};
+  const phone=String(config.whatsapp||'').replace(/^https:\/\/wa\.me\//,'').replace(/[^0-9]/g,'');
+  const validPhone=/^[1-9][0-9]{7,14}$/.test(phone);
+  const message=String(config.purchaseMessage||'Здравствуйте! Хочу получить доступ к видеоуроку Silk Styling.');
+  document.querySelectorAll('[data-whatsapp]').forEach(link=>{
+    if(validPhone)link.href='https://wa.me/'+phone+'?text='+encodeURIComponent(message);
+    else{link.removeAttribute('href');link.setAttribute('aria-disabled','true');link.title='Контакт для обучения пока не указан.';link.addEventListener('click',event=>event.preventDefault());}
   });
-  // Hide the floating contact when an action is already visible, so it cannot cover it.
-  const floating = document.querySelector('.whatsapp-float');
-  if (floating && 'IntersectionObserver' in globalThis) {
-    const visible = new Set();
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => entry.isIntersecting ? visible.add(entry.target) : visible.delete(entry.target));
-      floating.hidden = visible.size > 0;
-    });
-    document.querySelectorAll('[data-buy], [data-receipt], [data-question]:not(.whatsapp-float), .footer').forEach(node => observer.observe(node));
+  for(const [selector,key] of [['[data-course]','courseUrl'],['[data-receipt]','receiptUrl']]){
+    const link=document.querySelector(selector);if(!link)continue;
+    try{const url=new URL(config[key]);if(url.protocol!=='https:')throw Error();link.href=url.href;}catch{link.hidden=true;}
   }
-  document.querySelectorAll('[data-receipt]').forEach(link => { link.href = config.receiptUrl; });
-  const root = document.querySelector('#modules'); root.replaceChildren();
-  config.modules.forEach((module, index) => {
-    const card = document.createElement('article'); card.className = 'module';
-    const number = document.createElement('span'); number.className = 'module-number'; number.textContent = String(index + 1).padStart(2, '0');
-    const title = document.createElement('h3'); title.textContent = module.title;
-    const text = document.createElement('p'); text.textContent = module.text;
-    card.append(number, title, text); root.appendChild(card);
-  });
+  const rewatch=document.querySelector('[data-rewatch]');
+  if(rewatch)rewatch.hidden=config.canRewatch!==true;
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!reduced && 'IntersectionObserver' in window){
+    const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
+      if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target);}
+    }),{threshold:0,rootMargin:'0px 0px -25px 0px'});
+    document.querySelectorAll('.section:not(.hero) .section-heading,.step,.audience-list,.price-panel,.format-art').forEach(element=>{element.classList.add('reveal-ready');observer.observe(element);});
+  }
 })();

@@ -231,6 +231,8 @@ function serveStatic(urlPath, response) {
   if (urlPath === '/frontend/site-config.js') relativePath = 'frontend/site-config.js';
   if (urlPath === '/frontend/landing.css') relativePath = 'frontend/landing.css';
   if (urlPath === '/assets/favicon.svg') relativePath = 'assets/favicon.svg';
+  if (urlPath === '/assets/preview.png') relativePath = 'assets/preview.png';
+  if (urlPath === '/assets/preview.svg') relativePath = 'assets/preview.svg';
   if (urlPath === '/frontend/landing.js') relativePath = 'frontend/landing.js';
   if (urlPath === config.publicConfig.kaspiQrUrl && fs.existsSync(qrPath)) relativePath = qrPath;
   if (!relativePath) return false;

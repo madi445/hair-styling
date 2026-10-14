@@ -14,12 +14,14 @@ let html = fs.readFileSync(path.join(root, 'index.html'), 'utf8')
   .replace(/(data-price>)[^<]*/g, (_, prefix) => prefix + config.price.toLocaleString('ru-KZ') + ' ₸');
 html = html.replace(/(<span class="old-price" id="oldPrice">)[^<]*/, (_, prefix) => prefix + (config.promotionActive && config.price < config.regularPrice ? config.regularPrice.toLocaleString('ru-KZ') + ' ₸' : ''));
 if (config.receiptUrl) html = html.replace(/(data-receipt href=")[^"]*"/g, (_, prefix) => prefix + escape(config.receiptUrl) + '"');
+html = html.replace(/(data-whatsapp href=")[^"]*"/g, (_, prefix) => prefix + escape(buy) + '"');
+if (!config.canRewatch) html = html.replace(/(<p[^>]*data-rewatch)([^>]*>)/, '$1 hidden$2');
 const modules = config.modules.map((module, index) => '<article class="module"><span class="module-number">0' + (index + 1) + '</span><h3>' + escape(module.title) + '</h3><p>' + escape(module.text) + '</p></article>').join('');
 html = html.replace('<div class="modules" id="modules"></div>', '<div class="modules" id="modules">' + modules + '</div>');
 if (config.courseUrl) html = html.replace('data-course hidden href="/course/my-course/"', 'data-course href="' + escape(config.courseUrl) + '"');
 else html = html.replace(/<a[^>]*data-course[^>]*>.*?<\/a>/g, '');
 fs.writeFileSync(path.join(output, 'index.html'), html);
-for (const file of ['frontend/site-config.js', 'frontend/landing.js', 'frontend/landing.css', 'assets/favicon.svg']) fs.copyFileSync(path.join(root, file), path.join(output, file));
+for (const file of ['frontend/site-config.js', 'frontend/landing.js', 'frontend/landing.css', 'assets/favicon.svg', 'assets/preview.png', 'assets/preview.svg']) fs.copyFileSync(path.join(root, file), path.join(output, file));
 const redirects = ['/course/payment/', '/course/payment', '/course/payment/success/', '/course/payment/pending/', '/frontend/payment.html', '/frontend/success.html', '/frontend/pending.html'].map(route => route + ' ' + buy + ' 302');
 redirects.push('/course/ /index.html 200');
 if (config.receiptUrl) redirects.push('/course/confirm-payment/ ' + config.receiptUrl + ' 302');
