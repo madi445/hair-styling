@@ -91,7 +91,7 @@ test('WhatsApp receipt stays pending until owner approval and only paid accounts
     assert.equal(redirect.headers.get('location'), config.purchaseUrl);
   }
   const landing = await (await fetch(baseUrl + '/')).text();
-  assert.equal((landing.match(/data-buy href="https:\/\/wa.me\//g) || []).length, 2);
+  assert.equal((landing.match(/data-whatsapp href="https:\/\/wa.me\//g) || []).length, 4);
   assert.ok(!landing.includes('href="/course/payment/"'));
   assert.ok(!landing.includes('id="timer"'));
   assert.ok(!landing.includes('class="testimonial"'));
@@ -108,7 +108,7 @@ test('WhatsApp receipt stays pending until owner approval and only paid accounts
   assert.equal(qrResponse.headers.get('content-type'), 'image/jpeg');
   assert.ok((await qrResponse.arrayBuffer()).byteLength > 1000);
 
-  assert.equal((await fetch(`${baseUrl}/videos/IMG_1016.MOV`)).status, 404);
+  for(const route of ['/videos/IMG_1016.MOV','/videos/lesson-1.mp4','/data/silk-styling.sqlite','/backend/config.js']) assert.equal((await fetch(baseUrl+route)).status,404,route+' must remain private');
   assert.equal((await fetch(`${baseUrl}/api/lessons/lesson-1/video`, { headers: { Range: 'bytes=0-3' } })).status, 401);
 
   const paymentData = {
@@ -159,6 +159,10 @@ test('WhatsApp receipt stays pending until owner approval and only paid accounts
   const courseResponse = await fetch(`${baseUrl}/api/my-course`, { headers: { Cookie: buyerCookie } });
   assert.equal(courseResponse.status, 200);
   assert.equal((await courseResponse.json()).lessons.length, 1);
+  assert.equal((await fetch(baseUrl+'/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:'null'})).status,400);
+  assert.equal((await fetch(baseUrl+'/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:paymentData.email,password:'x'.repeat(129)})})).status,400);
+  for(let i=0;i<8;i++) assert.equal((await fetch(baseUrl+'/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'rate-qa@example.com',password:'wrong-password'})})).status,401);
+  assert.equal((await fetch(baseUrl+'/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'rate-qa@example.com',password:'wrong-password'})})).status,429);
   const logout = await fetch(`${baseUrl}/api/auth/logout`, { method: 'POST', headers: { Cookie: buyerCookie } });
   assert.equal(logout.status, 200);
   const login = await fetch(`${baseUrl}/api/auth/login`, {
@@ -170,6 +174,14 @@ test('WhatsApp receipt stays pending until owner approval and only paid accounts
   const stream = await fetch(`${baseUrl}/api/lessons/lesson-1/video`, { headers: { Cookie: loggedInCookie, Range: 'bytes=0-3' } });
   assert.equal(stream.status, 206);
   assert.equal(await stream.text(), 'test');
+  assert.equal(stream.headers.get('content-type'),'video/mp4');
+  assert.equal(stream.headers.get('cache-control'),'private, no-store');
+  for(const range of ['bytes=-4','bytes=4-','bytes=99999-','bytes=-','bytes=0-999999999999999999999999999999','bytes=0-1,3-4']){
+    const response=await fetch(`${baseUrl}/api/lessons/lesson-1/video`,{headers:{Cookie:loggedInCookie,Range:range}});
+    const valid=['bytes=-4','bytes=4-'].includes(range);assert.equal(response.status,valid?206:416,range);
+    if(valid)await response.arrayBuffer();
+  }
+  assert.equal((await fetch(baseUrl+'/api/lessons/lesson-1/video',{headers:{Cookie:loggedInCookie,Origin:'https://evil.example'}})).status,403);
 
   const rejectedData = { ...paymentData, name: 'Второй покупатель', email: 'rejected@example.com', transactionId: 'KASPI-TEST-002', screenshotData: 'data:image/png;base64,iVBORw0KGgoBAA==' };
   const rejectedResponse = await fetch(`${baseUrl}/api/payments`, {

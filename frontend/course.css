@@ -5,3 +5,8 @@
 :focus-visible{outline:3px solid #286549;outline-offset:4px}.panel,.lesson{min-width:0;overflow-wrap:anywhere}.field{font-size:16px;max-width:100%}.button{padding-block:12px;text-align:center;line-height:1.4}.actions .button{min-height:44px}.watermark{max-width:calc(100% - 24px);overflow-wrap:anywhere}
 @media(max-width:430px){.shell{width:calc(100% - 28px)}.panel{padding:22px 16px}.lesson,.topbar{flex-wrap:wrap}.brand{font-size:1.15rem}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Complete portrait lesson: contain the frame and keep controls reachable. */
+.video-wrap video{height:auto;max-height:78vh;max-height:78dvh;object-fit:contain;background:#211c1d}
+.video-wrap[hidden]{display:none}
+.watermark{max-width:calc(100% - 24px)}

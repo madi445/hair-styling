@@ -10,7 +10,7 @@ const dataDir = path.join(root, 'data');
 const databasePath = config.databasePath || path.join(dataDir, 'silk-styling.sqlite');
 const videoPaths = {
   ...config.videoPaths,
-  'lesson-1': config.videoPaths['lesson-1'] || config.videoPath || path.join(root, 'videos', 'IMG_1016.MOV')
+  'lesson-1': config.videoPaths['lesson-1'] || config.videoPath || path.join(root, 'videos', 'lesson-1.mp4')
 };
 const qrPath = config.qrPath || path.join(root, 'assets', 'kaspi-qr.jpeg');
 fs.mkdirSync(path.dirname(databasePath), { recursive: true });
@@ -102,7 +102,7 @@ function readJson(request, maxBytes = 7 * 1024 * 1024) {
       chunks.push(chunk);
     });
     request.on('end', () => {
-      try { resolve(JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}')); }
+      try { const body=JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}');if(!body || typeof body!=='object' || Array.isArray(body)) throw Error('Object required');resolve(body); }
       catch { reject(Object.assign(new Error('Invalid JSON'), { status: 400 })); }
     });
     request.on('error', reject);
@@ -242,12 +242,19 @@ function serveStatic(urlPath, response) {
   const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.jpeg': 'image/jpeg', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml' };
   response.writeHead(200, { 'Content-Type': types[extension] || 'application/octet-stream', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
   if (relativePath === 'index.html') {
-    const html = fs.readFileSync(filePath, 'utf8').replace(/(data-buy href=")[^"]*"/g, '$1' + purchaseUrl().replaceAll('&', '&amp;') + '"').replace('data-course hidden', 'data-course');
+    const html = fs.readFileSync(filePath, 'utf8').replace(/(data-whatsapp href=")[^"]*"/g, '$1' + purchaseUrl().replaceAll('&', '&amp;') + '"').replace('data-course hidden', 'data-course');
     response.end(html);
   } else fs.createReadStream(filePath).pipe(response);
   return true;
 }
 
+function pipeVideo(file, options, request, response){
+  const stream=fs.createReadStream(file,options);
+  stream.on('error',()=>response.destroy());
+  response.once('close',()=>stream.destroy());
+  request.once('aborted',()=>stream.destroy());
+  stream.pipe(response);
+}
 function streamVideo(request, response, userId, lessonId) {
   const hasAccess = queries.access.get(userId)?.course_id === 'hair-styling';
   if (!hasAccess) return sendJson(response, 403, { error: 'Доступ откроется после подтверждения оплаты.' });
@@ -267,17 +274,21 @@ function streamVideo(request, response, userId, lessonId) {
       response.writeHead(416, { 'Content-Range': `bytes */${size}` });
       return response.end();
     }
-    const start = match[1] ? Number(match[1]) : Math.max(0, size - Number(match[2]));
+    const first=Number(match[1]),last=Number(match[2]);
+    if ((!match[1]&&!match[2]) || (match[1]&&!Number.isSafeInteger(first)) || (match[2]&&!Number.isSafeInteger(last)) || (!match[1]&&last<=0)) {
+      response.writeHead(416,{'Content-Range':`bytes */${size}`});return response.end();
+    }
+    const start = match[1] ? first : Math.max(0, size - last);
     const end = match[2] && match[1] ? Math.min(Number(match[2]), size - 1) : size - 1;
     if (start >= size || end < start) {
       response.writeHead(416, { 'Content-Range': `bytes */${size}` });
       return response.end();
     }
     response.writeHead(206, { 'Content-Range': `bytes ${start}-${end}/${size}`, 'Content-Length': end - start + 1 });
-    return fs.createReadStream(videoPath, { start, end }).pipe(response);
+    return pipeVideo(videoPath,{start,end},request,response);
   }
   response.writeHead(200, { 'Content-Length': size });
-  fs.createReadStream(videoPath).pipe(response);
+  pipeVideo(videoPath,{},request,response);
 }
 
 const loginAttempts = new Map();
@@ -357,8 +368,15 @@ const server = http.createServer(async (request, response) => {
       const data = await readJson(request, 16000);
       const email = typeof data.email === 'string' ? data.email.trim().toLowerCase() : '';
       const password = typeof data.password === 'string' ? data.password : '';
+      if(!validEmail(email)||email.length>254||password.length<1||password.length>128)return sendJson(response,400,{error:'Проверьте email и пароль.'});
+      const attemptKey='user:'+request.socket.remoteAddress+':'+email;
+      const record=loginAttempts.get(attemptKey)||{count:0,resetAt:Date.now()+15*60*1000};
+      if(record.resetAt<Date.now()){record.count=0;record.resetAt=Date.now()+15*60*1000;}
+      if(record.count>=8)return sendJson(response,429,{error:'Слишком много попыток. Попробуйте позже.'});
+      record.count++;loginAttempts.set(attemptKey,record);
       const user = queries.userByEmail.get(email);
       if (!user || !isPasswordValid(password, user.password_salt, user.password_hash)) return sendJson(response, 401, { error: 'Неверный email или пароль.' });
+      loginAttempts.delete(attemptKey);
       setSession(response, user.id, 'user');
       return sendJson(response, 200, { user: queries.userById.get(user.id) });
     }

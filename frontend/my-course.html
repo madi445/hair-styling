@@ -1,3 +1,27 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Мой курс | Silk Styling</title><link rel="stylesheet" href="/frontend/course.css"></head><body><header class="shell topbar"><a class="brand" href="/course/"><span class="brand-mark">S</span>Silk Styling</a><button class="button secondary" id="logout" type="button" hidden>Выйти</button></header><main class="shell page"><section class="panel"><span class="kicker">Личный кабинет</span><h1>Мой курс</h1><p class="lead" id="state">Проверяем доступ…</p><div id="lessons" class="lesson-list"></div><form id="loginForm" class="stack" hidden><h2>Вход в аккаунт</h2><label class="field-label" for="email">Email</label><input class="field" id="email" name="email" type="email" autocomplete="email" required><label class="field-label" for="password">Пароль</label><input class="field" id="password" name="password" type="password" autocomplete="current-password" required><p class="error" id="error" role="alert"></p><button class="button" type="submit">Войти</button></form><a class="button secondary" href="/course/confirm-payment/">Я оплатил — отправить чек</a></section></main><script>
-const API_BASE=location.port==='5500'?'http://localhost:3000':'';const api=(url,options={})=>fetch(API_BASE+url,{credentials:'include',...options});const state=document.querySelector('#state');const form=document.querySelector('#loginForm');const lessons=document.querySelector('#lessons');const logout=document.querySelector('#logout');async function loadCourse(){const response=await api('/api/my-course');if(response.status===401){state.textContent='Войдите в аккаунт, связанный с вашим платежом.';form.hidden=false;logout.hidden=true;return}const data=await response.json();if(!response.ok){state.textContent=data.error;form.hidden=true;logout.hidden=true;return}form.hidden=true;logout.hidden=false;state.textContent=`Здравствуйте, ${data.user.name}. Доступ к курсу открыт.`;lessons.replaceChildren();for(const lesson of data.lessons){const link=document.createElement('a');link.className='lesson';link.href=lesson.url;link.innerHTML=`<span><strong>${lesson.title}</strong><br><span class="muted">${lesson.description}</span></span><span>Смотреть →</span>`;lessons.appendChild(link)}}form.addEventListener('submit',async(event)=>{event.preventDefault();const response=await api('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:form.email.value,password:form.password.value})});const result=await response.json();if(!response.ok){document.querySelector('#error').textContent=result.error;return}loadCourse()});logout.addEventListener('click',async()=>{await api('/api/auth/logout',{method:'POST'});location.reload()});loadCourse().catch(()=>{state.textContent='Не удалось подключиться к серверу.'});
+const API_BASE=location.port==='5500'?'http://localhost:3000':'';
+const api=(url,options={})=>fetch(API_BASE+url,{credentials:'include',...options});
+const state=document.querySelector('#state'),form=document.querySelector('#loginForm'),lessons=document.querySelector('#lessons'),logout=document.querySelector('#logout'),errorNode=document.querySelector('#error');
+async function loadCourse(){
+  const response=await api('/api/my-course');lessons.replaceChildren();
+  if(response.status===401){state.textContent='Войдите в аккаунт, связанный с вашим платежом.';form.hidden=false;logout.hidden=true;return;}
+  const data=await response.json();
+  if(!response.ok){state.textContent=data.error||'Не удалось проверить доступ.';form.hidden=true;logout.hidden=response.status!==403;return;}
+  form.hidden=true;logout.hidden=false;state.textContent=`Здравствуйте, ${data.user.name}. Доступ к курсу открыт.`;
+  for(const lesson of data.lessons){
+    const link=document.createElement('a'),copy=document.createElement('span'),title=document.createElement('strong'),description=document.createElement('span'),arrow=document.createElement('span');
+    link.className='lesson';link.href=lesson.url;title.textContent=lesson.title;description.className='muted';description.textContent=lesson.description;arrow.textContent='Смотреть →';
+    copy.append(title,document.createElement('br'),description);link.append(copy,arrow);lessons.append(link);
+  }
+}
+form.addEventListener('submit',async event=>{
+  event.preventDefault();const button=form.querySelector('button');if(button.disabled)return;button.disabled=true;errorNode.textContent='';
+  try{
+    const response=await api('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:form.elements.email.value,password:form.elements.password.value})});
+    const result=await response.json();if(!response.ok)throw Error(result.error||'Не удалось войти.');await loadCourse();
+  }catch(error){errorNode.textContent=error instanceof TypeError || error instanceof SyntaxError?'Не удалось подключиться к серверу. Попробуйте ещё раз.':error.message;}
+  finally{button.disabled=false;}
+});
+logout.addEventListener('click',async()=>{logout.disabled=true;try{const response=await api('/api/auth/logout',{method:'POST'});if(!response.ok)throw Error();location.reload();}catch{state.textContent='Не удалось выйти. Повторите попытку.';logout.disabled=false;}});
+loadCourse().catch(()=>{state.textContent='Не удалось подключиться к серверу.';form.hidden=false;});
 </script></body></html>

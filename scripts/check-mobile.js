@@ -61,23 +61,25 @@ let child, socket;
     await send('Emulation.setDeviceMetricsOverride', { width, height: 812, deviceScaleFactor: 1, mobile: width < 768 });
     await evaluate('window.scrollTo(0,0)');
     await delay(150);
-    const layout = await evaluate("({ theme: getComputedStyle(document.documentElement).getPropertyValue('--paper').trim(), width: innerWidth, scrollWidth: document.documentElement.scrollWidth, modules: document.querySelectorAll('#modules .module').length, prices: [...document.querySelectorAll('[data-price]')].map(n=>n.textContent), buy: [...document.querySelectorAll('[data-buy]')].map(n=>({url:n.href,height:n.getBoundingClientRect().height,color:getComputedStyle(n).color,background:getComputedStyle(n).backgroundColor})), instagram: [...document.querySelectorAll('a')].filter(n=>n.href.includes('instagram.com')).map(n=>n.href) })");
+    const layout = await evaluate("({ theme: getComputedStyle(document.documentElement).getPropertyValue('--paper').trim(), width: innerWidth, scrollWidth: document.documentElement.scrollWidth, modules: document.querySelectorAll('.steps .step').length, prices: [...document.querySelectorAll('.hero-price strong')].map(n=>n.textContent), buy: [...document.querySelectorAll('[data-whatsapp]')].map(n=>({url:n.href,height:n.getBoundingClientRect().height,color:getComputedStyle(n).color,background:getComputedStyle(n).backgroundColor})), instagram: [...document.querySelectorAll('a')].filter(n=>n.href.includes('instagram.com')).map(n=>n.href) })");
     assert.ok(layout.scrollWidth <= width, 'Horizontal overflow at ' + width + ': ' + JSON.stringify(layout));
-    assert.equal(layout.theme, '#fffaf7', 'Theme stylesheet must parse correctly');
-    assert.ok(layout.buy.every(button => button.background !== 'rgba(0, 0, 0, 0)' && button.background !== button.color), 'Purchase buttons must remain visible');
-    assert.equal(layout.modules, 5);
+    assert.equal(layout.theme, '#f5f1eb', 'Theme stylesheet must parse correctly');
+    assert.ok(layout.buy.every(button => button.background !== button.color), 'Purchase buttons must remain visible');
+    assert.equal(layout.modules, 3);
+    assert.equal(await evaluate("document.querySelectorAll('main > section').length"),6);
+    assert.ok(await evaluate("document.querySelector('#price').textContent.includes('50 000')"));
     const destinations = await evaluate("({course:document.querySelector('[data-course]')?.href,receipt:document.querySelector('[data-receipt]')?.href})");
     assert.equal(destinations.course, config.courseUrl);
     assert.equal(destinations.receipt, config.receiptUrl);
 
-    assert.equal(layout.buy.length, 2);
-    assert.ok(layout.buy.every(button => button.url === expected && button.height >= 48));
+    assert.equal(layout.buy.length, 4);
+    assert.ok(layout.buy.every(button => button.url === expected && button.height >= 44));
     assert.ok(layout.prices.every(price => price.replace(/\s/g, '') === '30000₸'));
     assert.ok(layout.instagram.every(url => url === config.instagram));
-    for (const index of [0, 1]) {
-      await evaluate("document.querySelectorAll('[data-buy]')[" + index + "].scrollIntoView({block:'center',behavior:'instant'})");
+    for (const index of [0, 1, 2, 3]) {
+      await evaluate("document.querySelectorAll('[data-whatsapp]')[" + index + "].scrollIntoView({block:'center',behavior:'instant'})");
       await delay(120);
-      const hit = await evaluate("(()=>{const n=document.querySelectorAll('[data-buy]')[" + index + "];const r=n.getBoundingClientRect();return document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest('[data-buy]')===n})()");
+      const hit = await evaluate("(()=>{const n=document.querySelectorAll('[data-whatsapp]')[" + index + "];const r=n.getBoundingClientRect();return document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest('[data-whatsapp]')===n})()");
       assert.equal(hit, true, 'Purchase button is covered at ' + width);
     }
     if (width === 390 || width === 1440) {
@@ -95,7 +97,7 @@ let child, socket;
   const files = [];
   const walk = directory => { for (const entry of fs.readdirSync(directory, { withFileTypes:true })) { const file = path.join(directory, entry.name); entry.isDirectory() ? walk(file) : files.push(path.relative(root, file).replaceAll('\\', '/')); } };
   walk(root);
-  assert.deepEqual(files.sort(), ['_headers','_redirects','assets/favicon.svg','frontend/landing.css','frontend/landing.js','frontend/site-config.js','index.html'].sort());
+  assert.deepEqual(files.sort(), ['_headers','_redirects','assets/favicon.svg','assets/preview.png','assets/preview.svg','frontend/landing.css','frontend/landing.js','frontend/site-config.js','index.html'].sort());
   console.log('PASS static site: no API dependency, no private files or JavaScript exceptions');
 })().catch(error => { console.error(error); process.exitCode = 1; }).finally(async () => {
   socket?.close();

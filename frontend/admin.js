@@ -74,14 +74,14 @@ async function showAdmin() {
   }
 }
 
-loginForm.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  errorText('#adminError', '');
-  const response = await api('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: document.querySelector('#adminPassword').value }) });
-  const result = await response.json();
-  if (!response.ok) { errorText('#adminError', result.error); return; }
-  showAdmin().catch((error) => errorText('#adminError', error.message));
+loginForm.addEventListener('submit', async event=>{
+  event.preventDefault();const button=loginForm.querySelector('button');if(button.disabled)return;button.disabled=true;errorText('#adminError','');
+  try{
+    const response=await api('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:document.querySelector('#adminPassword').value})});
+    const result=await response.json();if(!response.ok)throw Error(result.error||'Не удалось войти.');await showAdmin();
+  }catch(error){errorText('#adminError',error instanceof TypeError||error instanceof SyntaxError?'Не удалось подключиться к серверу. Попробуйте ещё раз.':error.message);}
+  finally{button.disabled=false;}
 });
+document.querySelector('#adminLogout').addEventListener('click',async()=>{try{const response=await api('/api/auth/logout',{method:'POST'});if(!response.ok)throw Error();location.reload();}catch{errorText('#listError','Не удалось выйти. Повторите попытку.');}});
 
-document.querySelector('#adminLogout').addEventListener('click', async () => { await api('/api/auth/logout', { method: 'POST' }); location.reload(); });
 showAdmin().catch((error) => errorText('#adminError', error.message));

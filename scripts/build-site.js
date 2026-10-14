@@ -18,8 +18,10 @@ html = html.replace(/(data-whatsapp href=")[^"]*"/g, (_, prefix) => prefix + esc
 if (!config.canRewatch) html = html.replace(/(<p[^>]*data-rewatch)([^>]*>)/, '$1 hidden$2');
 const modules = config.modules.map((module, index) => '<article class="module"><span class="module-number">0' + (index + 1) + '</span><h3>' + escape(module.title) + '</h3><p>' + escape(module.text) + '</p></article>').join('');
 html = html.replace('<div class="modules" id="modules"></div>', '<div class="modules" id="modules">' + modules + '</div>');
-if (config.courseUrl) html = html.replace('data-course hidden href="/course/my-course/"', 'data-course href="' + escape(config.courseUrl) + '"');
+if (config.courseUrl) html = html.replace(/data-course(?: hidden)? href="[^"]*"/g, 'data-course href="' + escape(config.courseUrl) + '"');
 else html = html.replace(/<a[^>]*data-course[^>]*>.*?<\/a>/g, '');
+const siteUrl=process.env.SITE_URL||config.siteUrl;
+if(siteUrl){const url=new URL(siteUrl);if(url.protocol!=='https:')throw Error('SITE_URL must use HTTPS');const base=url.href.replace(/\/?$/,'/');html=html.replace('property="og:url" content=""','property="og:url" content="'+escape(base)+'"').replaceAll('content="/assets/preview.png"','content="'+escape(new URL('assets/preview.png',base).href)+'"');}
 fs.writeFileSync(path.join(output, 'index.html'), html);
 for (const file of ['frontend/site-config.js', 'frontend/landing.js', 'frontend/landing.css', 'assets/favicon.svg', 'assets/preview.png', 'assets/preview.svg']) fs.copyFileSync(path.join(root, file), path.join(output, file));
 const redirects = ['/course/payment/', '/course/payment', '/course/payment/success/', '/course/payment/pending/', '/frontend/payment.html', '/frontend/success.html', '/frontend/pending.html'].map(route => route + ' ' + buy + ' 302');

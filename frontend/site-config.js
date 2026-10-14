@@ -3,7 +3,7 @@ const silkPublicConfig = {
   "price": 30000,
   "regularPrice": 50000,
   "promotionActive": false,
-  "whatsapp": "https://wa.me/77018441978",
+  "whatsapp": "https://wa.me/77479706963",
   "purchaseMessage": "Здравствуйте! Хочу получить доступ к видеоуроку Silk Styling по созданию пляжных локонов. Подскажите актуальную стоимость и как оплатить обучение.",
   "questionMessage": "Здравствуйте! У меня вопрос об авторском видеоуроке Silk Styling.",
   "instagram": "https://www.instagram.com/elvira.akkulykyzy",
@@ -29,7 +29,7 @@ const silkPublicConfig = {
   "author": "Эльвира Аққұлықызы",
   "canRewatch": true,
   "launchDate": "",
-  "siteUrl": ""
+  "siteUrl": "https://heartfelt-pie-f54630.netlify.app/"
 };
 if (typeof module !== "undefined" && module.exports) module.exports = silkPublicConfig;
 else globalThis.SILK_CONFIG = silkPublicConfig;
